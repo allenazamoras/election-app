@@ -1,14 +1,11 @@
 from django.shortcuts import render
 
 from rest_framework import viewsets
-from rest_framework import permissions
-from rest_framework import generics
 from rest_framework import mixins
+from rest_framework import permissions
 
 from election.models import Party, User
-from election.permissions import Appoint
-from election.serializers import PartySerializer, CreateUserSerializer
-from election.serializers import AppointSerializer
+from election.serializers import PartySerializer, UserSerializer
 
 
 class PartyViewSet(viewsets.ModelViewSet):
@@ -18,19 +15,14 @@ class PartyViewSet(viewsets.ModelViewSet):
     """
     queryset = Party.objects.all()
     serializer_class = PartySerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly, Appoint,)
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def perform_create(self, serializer):
-        serializer.save(admin=self.request.user)
+        serializer.save(creator=self.request.user)
 
 
-class AppointView(mixins.UpdateModelMixin, generics.GenericAPIView):
+class UserViewSet(viewsets.ModelViewSet):
+
     queryset = User.objects.all()
-    serializer_class = AppointSerializer
-
-
-class CreateUserView(generics.CreateAPIView):
-
-    model = User
-    serializer_class = CreateUserSerializer
-    permission_classes = (permissions.AllowAny,)
+    serializer_class = UserSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)

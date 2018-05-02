@@ -4,36 +4,25 @@ from rest_framework import serializers
 
 
 class PartySerializer(serializers.HyperlinkedModelSerializer):
-    admin = serializers.ReadOnlyField(source='admin.username')
+    creator = serializers.ReadOnlyField(source='creator.username')
 
     class Meta:
         model = Party
-        fields = ('id', 'name', 'detail', 'admin')
+        fields = ('id', 'name', 'detail', 'creator')
 
 
-class AppointSerializer(serializers.HyperlinkedModelSerializer):
-
-    class Meta:
-        model = User
-        fields = ('position', 'party')
-
-    def update(self, instance, validated_data):
-        instance.position = validated_data.get('position', instance.position)
-        instance.party = validated_data.get('party', instance.party)
-        instance.save()
-        return instance
-
-
-class CreateUserSerializer(serializers.HyperlinkedModelSerializer):
-
-    password = serializers.CharField(write_only=True)
+class UserSerializer(serializers.HyperlinkedModelSerializer):
 
     def create(self, validated_data):
+        password = serializers.CharField(write_only=True)
         user = User.objects.create(username=validated_data['username'])
         user.set_password(validated_data['password'])
+        user.set_firstname(validated_data['firstname'])
+        user.set_lastname(validated_data['lastname'])
         user.save()
         return user
+        
 
     class Meta:
         model = User
-        fields = ('username', 'password')
+        fields = ('username', 'password', 'firstname', 'lastname')

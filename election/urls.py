@@ -5,9 +5,8 @@ from election import views
 
 router = DefaultRouter()
 router.register(r'party', views.PartyViewSet)
+router.register(r'users', views.UserViewSet)
 
 urlpatterns = [
     url(r'^', include(router.urls)),
-    url(r'^register/$', views.CreateUserView.as_view()),
-    url(r'^appoint/$', views.AppointView.as_view()),
 ]
