@@ -10,6 +10,6 @@ router.register(r'users', views.UserViewSet)
 router.register(r'appoint', views.AppointViewSet)
 
 urlpatterns = [
-#    path('login/', views.LoginView.as_view()),
+    path('login/', views.LoginView.as_view()),
     url(r'^', include(router.urls)),
 ]

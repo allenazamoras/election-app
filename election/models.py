@@ -25,7 +25,7 @@ class User(AbstractUser):
         (6, "Assistant-Treasurer"),
         (7, "PRO"),
     )
-    position = models.IntegerField(choices=PARTY_POSITION, default=0)
+    position = models.SmallIntegerField(choices=PARTY_POSITION, default=0)
     party = models.ForeignKey(Party, on_delete=models.CASCADE,
                               blank=True, null=True)
     firstname = models.CharField(max_length=50, blank=False)

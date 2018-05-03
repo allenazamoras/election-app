@@ -1,6 +1,7 @@
 from election.models import Party, User
 
 from rest_framework import serializers
+from rest_framework.response import Response
 
 
 class PartySerializer(serializers.HyperlinkedModelSerializer):
@@ -15,17 +16,17 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = User
-        fields = ('username', 'password', 'firstname', 'lastname')
+        fields = ('id', 'username', 'password', 'firstname', 'lastname')
 
-"""
+
 class LoginSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
         fields = ('username', 'password')
-"""
 
-class AppointSerializer(serializers.HyperlinkedModelSerializer):
+
+class AppointSerializer(serializers.ModelSerializer):
     firstname = serializers.ReadOnlyField()
     lastname = serializers.ReadOnlyField()
     username = serializers.ReadOnlyField()
