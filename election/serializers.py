@@ -13,16 +13,25 @@ class PartySerializer(serializers.HyperlinkedModelSerializer):
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
 
-    def create(self, validated_data):
-        password = serializers.CharField(write_only=True)
-        user = User.objects.create(username=validated_data['username'])
-        user.set_password(validated_data['password'])
-        user.set_firstname(validated_data['firstname'])
-        user.set_lastname(validated_data['lastname'])
-        user.save()
-        return user
-        
-
     class Meta:
         model = User
         fields = ('username', 'password', 'firstname', 'lastname')
+
+"""
+class LoginSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ('username', 'password')
+"""
+
+class AppointSerializer(serializers.HyperlinkedModelSerializer):
+    firstname = serializers.ReadOnlyField()
+    lastname = serializers.ReadOnlyField()
+    username = serializers.ReadOnlyField()
+    id = serializers.ReadOnlyField()
+
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'firstname',
+                  'lastname', 'party', 'position')
