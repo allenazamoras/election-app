@@ -1,9 +1,6 @@
-from django.shortcuts import render
-from django.http import HttpResponseRedirect
 from django.contrib.auth import authenticate, login
 
 from rest_framework import viewsets
-from rest_framework import mixins
 from rest_framework import generics
 from rest_framework import permissions
 from rest_framework.response import Response
@@ -12,7 +9,6 @@ from election.models import Party, User
 from election.serializers import PartySerializer, UserSerializer
 from election.serializers import AppointSerializer
 from election.serializers import LoginSerializer
-from election.permissions import Appoint
 
 
 class PartyViewSet(viewsets.ModelViewSet):
@@ -34,13 +30,16 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
 
     def create(self, request):
+        obj = self.get_object()
         req = request.POST
         user = User.objects.create_user(username=req['username'],
                                         password=req['password'],
                                         firstname=req['firstname'],
                                         lastname=req['lastname'])
         user.save()
-        return Response(True)
+        serializer = UserSerializer(obj)
+        ret = {'Success': serializer.data}
+        return Response(ret)
 
 
 class LoginView(generics.ListCreateAPIView):
@@ -49,16 +48,17 @@ class LoginView(generics.ListCreateAPIView):
     serializer_class = LoginSerializer
 
     def create(self, request):
-        print(request.data['username'])
-        print(request.data['password'])
+        obj = self.get_object()
         user = authenticate(username=request.data['username'],
                             password=request.data['password'])
         print(user)
+        ret = {'Error': 'Invalid Login username/password'}
         if user is not None:
             if user.is_active:
                 login(request, user)
-                return Response(True)
-        return Response(False)
+                serializer = UserSerializer(obj)
+                ret = {'Success': serializer.data}
+        return Response(ret)
 
 
 class AppointViewSet(viewsets.ModelViewSet):
