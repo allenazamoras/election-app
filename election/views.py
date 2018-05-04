@@ -6,6 +6,7 @@ from rest_framework import viewsets
 from rest_framework import mixins
 from rest_framework import generics
 from rest_framework import permissions
+from rest_framework import status
 from rest_framework.response import Response
 
 from election.models import Party, User
@@ -40,7 +41,7 @@ class UserViewSet(viewsets.ModelViewSet):
                                         firstname=req['firstname'],
                                         lastname=req['lastname'])
         user.save()
-        return Response(True)
+        return Response(request.data)
 
 
 class LoginView(generics.ListCreateAPIView):
@@ -54,11 +55,12 @@ class LoginView(generics.ListCreateAPIView):
         user = authenticate(username=request.data['username'],
                             password=request.data['password'])
         print(user)
+        ret = {'return': 'Invalid Login credentials.'}
         if user is not None:
             if user.is_active:
                 login(request, user)
-                return Response(True)
-        return Response(False)
+                ret = {'return': request.data}
+        return Response(ret)
 
 
 class AppointViewSet(viewsets.ModelViewSet):
@@ -71,7 +73,7 @@ class AppointViewSet(viewsets.ModelViewSet):
     def update(self, request, pk=None):
         obj = self.get_object()
         req = request.POST
-        ret = {'Error': "U is error."}
+        ret = {'return': "That position is already taken."}
         position = User.objects.all().filter(party=req['party'],
                                              position=req['position'])
         if not position:
@@ -79,5 +81,5 @@ class AppointViewSet(viewsets.ModelViewSet):
             obj.party = Party.objects.get(id=req['party'])
             obj.save(update_fields=['position', 'party'])
             serializer = AppointSerializer(obj)
-            ret = {'something': serializer.data}
+            ret = {'return': serializer.data}
         return Response(ret)
