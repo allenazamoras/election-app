@@ -8,9 +8,11 @@ router = DefaultRouter()
 router.register(r'party', views.PartyViewSet)
 router.register(r'users', views.UserViewSet)
 router.register(r'appoint', views.AppointViewSet)
+router.register(r'vote', views.VoteViewSet)
+router.register(r'voteall', views.VoteAllViewSet)
 
 urlpatterns = [
-    url(r'^login/', views.LoginView.as_view()),
+    url(r'^login', views.LoginView.as_view()),
     url(r'^', include(router.urls)),
 ]
 
