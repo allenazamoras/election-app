@@ -74,8 +74,14 @@ class UnvoteSerializer(serializers.ModelSerializer):
         fields = ('id', 'username', 'party', 'position')
 
 
-# class ResultSerializer(serializers.ModelSerializer):
+class ResultSerializer(serializers.ModelSerializer):
+    vote = serializers.SerializerMethodField()
+    party = serializers.ReadOnlyField(source='party.name')
 
-#     class Meta:
-#         model = User
-#         fields = ('candidate',)
+    def get_vote(self, obj):
+        count = Vote.objects.filter(candidate=obj).count()
+        return count
+
+    class Meta:
+        model = User
+        fields = ('username', 'party', 'position', 'vote')

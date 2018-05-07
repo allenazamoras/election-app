@@ -15,7 +15,8 @@ router.register(r'castvote', views.CastVoteViewSet)
 
 urlpatterns = [
     url(r'^login', views.LoginView.as_view()),
-#    url(r'^result', views.ResultView.as_view()),
+    url(r'^result', views.ResultView.as_view()),
+    url(r'^logout', views.LogoutView.as_view()),
     url(r'^', include(router.urls)),
 ]
 

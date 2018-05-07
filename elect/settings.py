@@ -25,7 +25,9 @@ SECRET_KEY = 'j^1g(%nlvtu-deywmoni!ga%8lrp&1u&y3@+s=0%4r0!134-)f'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['172.0.0.92', '127.0.0.1', '172.0.0.103:8000', 'localhost', '192.168.1.2']
+ALLOWED_HOSTS = ['172.0.0.92', '127.0.0.1', '172.0.0.103:8000', 'localhost',
+                 '192.168.1.2']
+# ALLOWED_HOSTS = []
 
 AUTH_USER_MODEL = 'election.User'
 # Application definition
@@ -42,7 +44,13 @@ INSTALLED_APPS = [
     'corsheaders',
 ]
 
-CORS_ORIGIN_ALLOW_ALL = True
+CORS_ORIGIN_ALLOW_ALL = False
+
+CORS_ORIGIN_WHITELIST = (
+    'http://localhost:8000',
+)
+
+# CORS_ALLOW_CREDENTIALS = True
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -138,5 +146,6 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
     ),
 }

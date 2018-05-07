@@ -1,8 +1,9 @@
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 
 from rest_framework import viewsets
 from rest_framework import generics
 from rest_framework import permissions
+from rest_framework.views import APIView
 from rest_framework.response import Response
 
 from election.models import Party, User, Vote
@@ -10,7 +11,7 @@ from election.serializers import PartySerializer, UserSerializer
 from election.serializers import AppointSerializer, VoteAllSerializer
 from election.serializers import LoginSerializer, VoteSerializer
 from election.serializers import CastVoteSerializer, UnvoteSerializer
-#from election.serializers import ResultSerializer
+from election.serializers import ResultSerializer
 
 
 class PartyViewSet(viewsets.ModelViewSet):
@@ -58,6 +59,13 @@ class LoginView(generics.ListCreateAPIView):
         return Response(ret)
 
 
+class LogoutView(generics.ListAPIView):
+
+    def get(self, request, format=None):
+        logout(request)
+        return Response("Logout")
+
+
 class AppointViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = AppointSerializer
@@ -90,21 +98,25 @@ class VoteViewSet(viewsets.ModelViewSet):
         req = request.POST
         user = User.objects.get(username=request.user)
         candidate = User.objects.get(username=req['username'])
-        candidate2 = User.objects.filter(position=candidate.position).first()
-        voted = Vote.objects.filter(user=request.user,
-                                    candidate=candidate2)
+        ret = {'return': "You can't vote for yourself"}
+        if request.user != candidate:
+            candidate2 = User.objects.filter(position=candidate.position).\
+                first()
+            voted = Vote.objects.filter(user=request.user,
+                                        candidate=candidate2)
 
-        ret = {'return': "You've already voted for this position"}
-        if not voted:
-            vote = Vote(user=user, candidate=candidate)
-            vote.save()
-            ret = {'return': 'Successfully voted for candidate'}
+            ret = {'return': "You've already voted for this position"}
+            if not voted:
+                vote = Vote(user=user, candidate=candidate)
+                vote.save()
+                ret = {'return': 'Successfully voted for candidate'}
         return Response(ret)
 
 
 class VoteAllViewSet(viewsets.ModelViewSet):
     queryset = Party.objects.all()
     serializer_class = VoteAllSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def create(self, request):
         req = request.POST
@@ -128,6 +140,7 @@ class VoteAllViewSet(viewsets.ModelViewSet):
 class CastVoteViewSet(viewsets.ModelViewSet):
     queryset = Vote.objects.all()
     serializer_class = CastVoteSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def list(self, request, *args, **kwargs):
         vote = Vote.objects.filter(user=request.user)
@@ -149,6 +162,7 @@ class CastVoteViewSet(viewsets.ModelViewSet):
 class UnvoteViewSet(viewsets.ModelViewSet):
     queryset = Vote.objects.all()
     serializer_class = UnvoteSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def list(self, request, *args, **kwargs):
         vote = Vote.objects.filter(user=request.user)
@@ -164,14 +178,6 @@ class UnvoteViewSet(viewsets.ModelViewSet):
         return Response(ret)
 
 
-# class ResultView(generics.ListAPIView):
-#     queryset = User.objects.exclude(position=0)
-#     serializer_class = ResultSerializer
-
-#     def get_serializer_context(self):
-#         context = super(ResultView, self).get_serializer_context()
-#         candidate_set = User.objects.exclude(position=0)
-#         for candidate in candidate_set:
-#             count = Vote.objects.filter(candidate=candidate).count()
-#             context.update({'candidate': candidate.username, 'count': count})
-#         return context
+class ResultView(generics.ListAPIView):
+    queryset = User.objects.exclude(position=0)
+    serializer_class = ResultSerializer
