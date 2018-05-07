@@ -2,6 +2,12 @@
 
 > Vote App with VueJS
 
+## Requirements
+
+1. ``` NodeJS v8.11.1 ```
+2. ``` npm v6.0.0 ```
+	
+
 ## Build Setup
 
 ``` bash
