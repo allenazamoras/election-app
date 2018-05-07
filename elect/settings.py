@@ -25,7 +25,7 @@ SECRET_KEY = 'j^1g(%nlvtu-deywmoni!ga%8lrp&1u&y3@+s=0%4r0!134-)f'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['172.0.0.92', '127.0.0.1', '172.0.0.103:8000', 'localhost']
+ALLOWED_HOSTS = ['172.0.0.92', '127.0.0.1', '172.0.0.103:8000', 'localhost', '192.168.1.2']
 
 AUTH_USER_MODEL = 'election.User'
 # Application definition
