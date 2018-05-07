@@ -1,6 +1,6 @@
 # vuelec
 
-> A Vue.js project
+> Vote App with VueJS
 
 ## Build Setup
 
