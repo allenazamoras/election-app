@@ -1,7 +1,6 @@
 from election.models import Party, User, Vote
 
 from rest_framework import serializers
-from rest_framework.response import Response
 
 
 class PartySerializer(serializers.HyperlinkedModelSerializer):
@@ -37,6 +36,8 @@ class AppointSerializer(serializers.ModelSerializer):
 
 
 class VoteSerializer(serializers.ModelSerializer):
+    party = serializers.ReadOnlyField(source='party.name')
+    position = serializers.ReadOnlyField()
 
     class Meta:
         model = User
@@ -50,3 +51,31 @@ class VoteAllSerializer(serializers.ModelSerializer):
     class Meta:
         model = Party
         fields = ('id', 'name', 'detail')
+
+
+class CastVoteSerializer(serializers.ModelSerializer):
+    firstname = serializers.ReadOnlyField(source='candidate.firstname')
+    lastname = serializers.ReadOnlyField(source='candidate.lastname')
+    position = serializers.ReadOnlyField(source='candidate.position')
+    party = serializers.ReadOnlyField(source='candidate.party.name')
+
+    class Meta:
+        model = Vote
+        fields = ('firstname', 'lastname', 'position', 'party')
+
+
+class UnvoteSerializer(serializers.ModelSerializer):
+    username = serializers.ReadOnlyField(source='candidate.username')
+    party = serializers.ReadOnlyField(source='candidate.party.name')
+    position = serializers.ReadOnlyField(source='candidate.position')
+
+    class Meta:
+        model = Vote
+        fields = ('id', 'username', 'party', 'position')
+
+
+# class ResultSerializer(serializers.ModelSerializer):
+
+#     class Meta:
+#         model = User
+#         fields = ('candidate',)

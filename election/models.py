@@ -37,4 +37,4 @@ class Vote(models.Model):
                                   related_name='candidate')
     user = models.ForeignKey(User, on_delete=models.CASCADE,
                              related_name='user')
-
+    flag = models.IntegerField(default=0)
