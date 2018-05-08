@@ -1,7 +1,7 @@
 from django.contrib import admin
-from .models import Party, User, Vote
-
 from django.contrib.sessions.models import Session
+
+from .models import Party, User, Vote
 
 
 class SessionAdmin(admin.ModelAdmin):

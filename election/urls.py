@@ -1,6 +1,6 @@
-from django.urls import path
 from django.conf.urls import url, include
 from rest_framework.routers import DefaultRouter
+from rest_framework.authtoken.views import obtain_auth_token
 from election import views
 
 
@@ -18,6 +18,7 @@ urlpatterns = [
     url(r'^result', views.ResultView.as_view()),
     url(r'^logout', views.LogoutView.as_view()),
     url(r'^', include(router.urls)),
+    url(r'^api-token-auth/', obtain_auth_token),
 ]
 
 urlpatterns += router.urls
