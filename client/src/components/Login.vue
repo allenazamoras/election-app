@@ -1,6 +1,6 @@
 <template>
     <div class="columns">
-        <div class="column is-one-third is-offset-4 is-8-mobile box has-shadow" style="padding: 20px;"> 
+        <div class="column is-one-third is-offset-4 is-8-mobile" style="padding: 20px;"> 
             <h1 class="is-size-3 has-text-centered">Login</h1>
             <div class="notification is-danger" v-if="error == true">
                 <button class="delete" @click="error = !error"></button> 
@@ -9,18 +9,18 @@
             <div class="field">
                 <label class="label">Username</label>
                 <div class="control">
-                    <input type="text" class="input is-medium " placeholder="" v-model="username">
+                    <input type="text" class="is-radiusless input is-medium " placeholder="" v-model="username">
                 </div>
             </div> 
             <div class="field">
                 <label class="label">Password</label>
                 <div class="control">
-                    <input type="password" class="input is-medium " placeholder="" v-model="password">
+                    <input type="password" class="is-radiusless input is-medium " placeholder="" v-model="password">
                 </div>
             </div> 
             <div class="field">
                 <div class="control">
-                    <a type="button" class="button  is-success is-medium loginBtn" :class="{'is-loading': isLoading}" @click="login">Login</a>
+                    <a type="button" class="is-radiusless button is-dark is-medium loginBtn" :class="{'is-loading': isLoading}" @click="login">Login</a>
                 </div>
             </div> 
         </div>
@@ -33,8 +33,8 @@ import axios from 'axios'
 export default {
     data() { 
         return { 
-            username: "",
-            password: "",
+            username: "admin",
+            password: "password123",
             isLoading: false,
             error: false,
         }
@@ -42,32 +42,32 @@ export default {
 
     methods: {
         login() {
-            this.$cookies.set("session", "HJHAHAHAH")
+            let config = { 
+                headers: {"token": "60515ce1fab71f4a8af442f6388f02096c9ee6f9"}
+            }
             this.isLoading = true
-            axios.post("http://192.168.1.2:8000/login/", {
+            axios.post("http://192.168.1.2:8000/api-token-auth/", {
                 username: this.username,
                 password: this.password
             })
-
             .then( (res) => {
                 console.log(res)
-                if(res.data.success == 0){ 
+                if(res.data.token.length == 0){ 
                     this.$toast.open({
                         message: "Invalid credentials",
                         type: "is-danger"
                     })
 
                     this.isLoading = false
-                }else if(res.data.success == 1){ 
+                }else if(res.data.token.length != 0){ 
                     this.$toast.open({
                         message: "Logged in",
                         type: "is-success"
                     })
 
-                    this.$cookies.set("session", res.data.session)
+                    localStorage.setItem("token", res.data.token);
+                    this.$store.commit("changeIsLoggedIn")
                 }
-
-                this.$cookies.set("session", "HJHAHAHAH")
             })
 
             .catch ( (res) => {

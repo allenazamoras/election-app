@@ -3,6 +3,7 @@
     <app-nav></app-nav>
 
     <router-view></router-view>
+
   </div>
 </template>
 
@@ -13,38 +14,29 @@ export default {
   name: 'app',
   data () {
     return {
-      msg: 'Welcome to Your Vue.js App'
     }
   },
   components: { 
     appNav
-  }
+  },
 }
 </script>
 
 <style>
-#app {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  margin : 0px;
-}
+  #app { 
+    padding: 0;
+    margin: 0;
+  }
 
-h1, h2 {
-  font-weight: normal;
-}
+  * { 
+    font-family: "Arvo", serif;
+  }
 
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-
-a {
-  color: #42b983;
-}
-
+  input:text { 
+    border: none;
+  }
 </style>
+
+<style>
+    @import url('https://fonts.googleapis.com/css?family=Roboto+Slab:700|Arvo');
+</style> 
