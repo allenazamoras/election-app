@@ -7,7 +7,7 @@ from rest_framework.authtoken.models import Token
 
 
 class Party(models.Model):
-    name = models.CharField(max_length=100, blank=True, default='Independent')
+    name = models.CharField(max_length=100, blank=False, default='No Name')
     detail = models.TextField(blank=True, default='')
 
     def __str__(self):

@@ -24,13 +24,24 @@ class PartyViewSet(viewsets.ModelViewSet):
     serializer_class = PartySerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
+    def create(self, request):
+        req = request.data
+        ret = {'error': 'Please provide party name'}
+        if req['name']:
+            name = req['name']
+            detail = req['detail']
+            party = Party(name=name, detail=detail)
+            party.save()
+            ret = {'success': request.data}
+        return Response(ret)
+
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
     def create(self, request):
-        req = request.POST
+        req = request.data
         user = User.objects.create_user(username=req['username'],
                                         password=req['password'],
                                         firstname=req['firstname'],
@@ -56,7 +67,6 @@ class LoginView(generics.ListCreateAPIView):
                 login(request, user)
                 ret = {'return': request.data, 'success': 1,
                        'session': request.session.session_key}
-        print(request.session.set_test_cookie())
         return Response(ret)
 
 
@@ -75,7 +85,7 @@ class AppointViewSet(viewsets.ModelViewSet):
 
     def update(self, request, pk=None):
         obj = self.get_object()
-        req = request.POST
+        req = request.data
         ret = {'return': 'That position is already taken.'}
         position = User.objects.all().filter(party=req['party'],
                                              position=req['position']).exclude(
@@ -96,7 +106,7 @@ class VoteViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def create(self, request):
-        req = request.POST
+        req = request.data
         user = User.objects.get(username=request.user)
         candidate = User.objects.get(username=req['username'])
         ret = {'return': "You can't vote for yourself"}
@@ -120,14 +130,14 @@ class VoteAllViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def create(self, request):
-        req = request.POST
+        req = request.data
         party = Party.objects.get(name=req['name'])
         candidate_set = User.objects.filter(party=party)
 
         ret = {'return': 'No available candidates for this party.'}
         if candidate_set:
-            ret = {'return': 'You have voted for the candidates'
-                             ' of this party.'}
+            ret = {'return': "You've voted for the candidates"
+                             "of this party."}
             for candidate in candidate_set:
                 voted = Vote.objects.filter(user=request.user,
                                             candidate=candidate)
